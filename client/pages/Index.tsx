@@ -194,21 +194,27 @@ export default function Index() {
                             <span className="text-sm text-text-primary">{agent.name}</span>
                           </td>
                           <td className="h-[46px] px-2 border-b border-neutral-200">
-                            <Select defaultValue="1.1.0">
-                              <SelectTrigger className="w-full h-8 text-sm text-text-tertiary border-neutral-200 shadow-[0_1px_2px_0_rgba(50,56,62,0.08)]">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="1.1.0">1.1.0</SelectItem>
-                                <SelectItem value="1.0.0">1.0.0</SelectItem>
-                              </SelectContent>
-                            </Select>
+                            <div className="w-[126px]">
+                              <Select defaultValue="1.1.0">
+                                <SelectTrigger className="w-full h-8 text-sm text-text-tertiary border-neutral-200 shadow-[0_1px_2px_0_rgba(50,56,62,0.08)]">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="1.1.0">1.1.0</SelectItem>
+                                  <SelectItem value="1.0.0">1.0.0</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
                           </td>
                           <td className="h-[46px] px-2 border-b border-neutral-200">
-                            <DatePicker value="2024-12-01" />
+                            <div className="w-[126px]">
+                              <DatePicker value="2024-12-01" />
+                            </div>
                           </td>
                           <td className={`h-[46px] px-2 border-b border-r border-neutral-200 ${idx === agents.length - 1 ? 'rounded-br' : ''}`}>
-                            <DatePicker value="2025-12-31" />
+                            <div className="w-[126px]">
+                              <DatePicker value="2025-12-31" />
+                            </div>
                           </td>
                         </tr>
                       ))}
