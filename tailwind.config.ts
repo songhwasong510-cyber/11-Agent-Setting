@@ -13,6 +13,9 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['Pretendard Variable', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -22,6 +25,8 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          50: "hsl(var(--primary-050))",
+          600: "hsl(var(--primary-600))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -56,6 +61,17 @@ export default {
           "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
+        },
+        text: {
+          primary: "hsl(var(--text-primary))",
+          secondary: "hsl(var(--text-secondary))",
+          tertiary: "hsl(var(--text-tertiary))",
+        },
+        neutral: {
+          20: "hsl(var(--neutral-020))",
+          50: "hsl(var(--neutral-050))",
+          200: "hsl(var(--neutral-200))",
+          400: "hsl(var(--neutral-400))",
         },
       },
       borderRadius: {
