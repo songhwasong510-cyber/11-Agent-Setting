@@ -1,868 +1,1179 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>법인 사용 설정</title>
-  <link href="https://fonts.googleapis.com/css2?family=Pretendard+Variable:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    :root {
-      --primary: #1447E6;
-      --primary-light: #DBEAFE;
-      --primary-lighter: #E0E7FF;
-      --text-primary: #0F172B;
-      --text-secondary: #314158;
-      --text-tertiary: #45556C;
-      --border: #CAD5E2;
-      --bg-light: #F1F5F9;
-      --bg-white: #FFFFFF;
-      --neutral-50: #F8FAFC;
-      --neutral-200: #CAD5E2;
-      --neutral-400: #62748E;
-      --destructive: #E7000B;
-      --radius: 4px;
-    }
-
-    body {
-      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--bg-white);
-      color: var(--text-primary);
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    /* Layout */
-    .container {
-      display: flex;
-      height: 100vh;
-      background: var(--bg-white);
-    }
-
-    /* Sidebar */
-    .sidebar {
-      width: 234px;
-      border-right: 1px solid var(--border);
-      background: var(--bg-light);
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-    }
-
-    .sidebar-header {
-      height: 52px;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg-white);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 18px;
-    }
-
-    .sidebar-menu {
-      flex: 1;
-      padding: 6px 12px;
-    }
-
-    .menu-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 11px 10px;
-      border-radius: var(--radius);
-      cursor: pointer;
-      color: var(--text-secondary);
-      font-weight: 700;
-      margin-bottom: 6px;
-      transition: background 0.2s;
-    }
-
-    .menu-item:hover {
-      background: rgba(255, 255, 255, 0.5);
-    }
-
-    .menu-item.active {
-      background: rgba(255, 255, 255, 0.5);
-      color: var(--primary);
-    }
-
-    .menu-item svg {
-      width: 18px;
-      height: 18px;
-    }
-
-    .menu-icon {
-      flex-shrink: 0;
-    }
-
-    .menu-label {
-      flex: 1;
-      font-size: 14px;
-    }
-
-    /* Main Content */
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .header {
-      height: 52px;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg-white);
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding: 0 20px;
-      gap: 4px;
-    }
-
-    .header-icon {
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      border-radius: var(--radius);
-      transition: background 0.2s;
-    }
-
-    .header-icon:hover {
-      background: var(--neutral-50);
-    }
-
-    .notification-badge {
-      position: relative;
-    }
-
-    .badge {
-      position: absolute;
-      top: -6px;
-      right: -6px;
-      width: 20px;
-      height: 18px;
-      background: var(--destructive);
-      color: white;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 400;
-      line-height: 18px;
-    }
-
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 0 8px;
-      cursor: pointer;
-    }
-
-    .avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      background: var(--bg-white);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      color: var(--text-secondary);
-    }
-
-    .user-name {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text-secondary);
-    }
-
-    /* Content Area */
-    .content {
-      flex: 1;
-      overflow-y: auto;
-      padding: 24px;
-    }
-
-    .breadcrumb {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 14px;
-      margin-bottom: 16px;
-    }
-
-    .breadcrumb-item {
-      color: var(--text-secondary);
-      padding: 0 4px;
-    }
-
-    .breadcrumb-separator {
-      color: var(--text-secondary);
-    }
-
-    /* Header Section */
-    .header-section {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 15px 20px;
-      border: 1px solid #BEDBFF;
-      border-radius: 8px;
-      background: linear-gradient(90deg, #DBEAFE 0%, #E0E7FF 100%);
-      box-shadow: 0 1px 2px rgba(50, 56, 62, 0.08);
-      margin-bottom: 24px;
-    }
-
-    .header-title-group {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .header-icon-building {
-      width: 38px;
-      height: 38px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .header-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--text-primary);
-      line-height: 31px;
-    }
-
-    .button-group {
-      display: flex;
-      gap: 6px;
-    }
-
-    .btn {
-      padding: 2px 12px;
-      height: 32px;
-      border-radius: var(--radius);
-      border: none;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: 'Pretendard Variable', sans-serif;
-    }
-
-    .btn-secondary {
-      border: 1px solid #51A2FF;
-      color: var(--primary);
-      background: white;
-    }
-
-    .btn-secondary:hover {
-      background: rgba(20, 71, 230, 0.05);
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: #0e34cc;
-    }
-
-    /* Layout Grid */
-    .layout {
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      gap: 16px;
-    }
-
-    /* Panels */
-    .panel {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      box-shadow: 0 1px 2px rgba(50, 56, 62, 0.08);
-      overflow: hidden;
-    }
-
-    .panel-header {
-      height: 46px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      padding: 0 20px;
-    }
-
-    .panel-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text-primary);
-      line-height: 24px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .badge-count {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 7px;
-      height: 20px;
-      background: var(--primary-light);
-      color: #193CB8;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .panel-content {
-      padding: 20px;
-    }
-
-    /* Dropdown */
-    .form-group {
-      margin-bottom: 12px;
-    }
-
-    .select-wrapper {
-      position: relative;
-    }
-
-    .select-box {
-      width: 100%;
-      height: 32px;
-      padding: 0 12px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--bg-white);
-      color: var(--text-secondary);
-      font-size: 14px;
-      cursor: pointer;
-      appearance: none;
-      box-shadow: 0 1px 2px rgba(50, 56, 62, 0.08);
-      font-family: 'Pretendard Variable', sans-serif;
-      padding-right: 30px;
-    }
-
-    .select-wrapper::after {
-      content: '▼';
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      pointer-events: none;
-      color: var(--text-primary);
-      font-size: 12px;
-    }
-
-    .search-box {
-      position: relative;
-      margin-bottom: 12px;
-    }
-
-    .search-input {
-      width: 100%;
-      height: 32px;
-      padding: 0 12px;
-      padding-right: 30px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--bg-white);
-      font-size: 14px;
-      color: var(--text-secondary);
-      box-shadow: 0 1px 2px rgba(50, 56, 62, 0.08);
-      font-family: 'Pretendard Variable', sans-serif;
-    }
-
-    .search-input::placeholder {
-      color: var(--neutral-400);
-    }
-
-    .search-icon {
-      position: absolute;
-      right: 8px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 18px;
-      height: 18px;
-      pointer-events: none;
-    }
-
-    /* Department List */
-    .dept-list {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      max-height: 320px;
-      overflow-y: auto;
-    }
-
-    .dept-item {
-      height: 32px;
-      padding: 6px 12px;
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      background: var(--bg-white);
-      color: var(--text-primary);
-      cursor: pointer;
-      font-size: 14px;
-      transition: all 0.2s;
-    }
-
-    .dept-item:hover {
-      background: var(--neutral-50);
-    }
-
-    .dept-item.selected {
-      border-color: var(--primary);
-      color: var(--primary);
-      font-weight: 700;
-    }
-
-    /* Switches */
-    .switch-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .switch {
-      position: relative;
-      width: 36px;
-      height: 20px;
-      background: var(--primary);
-      border: none;
-      border-radius: 16px;
-      cursor: pointer;
-      appearance: none;
-      padding: 0;
-      transition: background 0.2s;
-    }
-
-    .switch::before {
-      content: '';
-      position: absolute;
-      width: 12px;
-      height: 12px;
-      background: white;
-      border-radius: 50%;
-      top: 4px;
-      left: 20px;
-      transition: left 0.2s;
-    }
-
-    .switch:not(:checked) {
-      background: var(--neutral-200);
-    }
-
-    .switch:not(:checked)::before {
-      left: 2px;
-    }
-
-    .switch-label {
-      font-size: 14px;
-      color: var(--primary);
-      font-weight: 400;
-    }
-
-    /* Tables */
-    .table-wrapper {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    thead {
-      background: var(--bg-light);
-    }
-
-    th {
-      height: 40px;
-      padding: 10px 8px;
-      text-align: left;
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text-secondary);
-      border: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-    }
-
-    th:first-child {
-      border-left: 1px solid var(--border);
-      border-radius: 4px 0 0 0;
-    }
-
-    th:last-child {
-      border-right: 1px solid var(--border);
-      border-radius: 0 4px 0 0;
-    }
-
-    td {
-      height: 46px;
-      padding: 6px 8px;
-      border-bottom: 1px solid var(--border);
-      border-left: 1px solid var(--border);
-      font-size: 14px;
-      color: var(--text-primary);
-    }
-
-    td:last-child {
-      border-right: 1px solid var(--border);
-    }
-
-    tbody tr:last-child td {
-      border-bottom: 1px solid var(--border);
-    }
-
-    tbody tr:last-child td:first-child {
-      border-bottom-left-radius: 4px;
-    }
-
-    tbody tr:last-child td:last-child {
-      border-bottom-right-radius: 4px;
-    }
-
-    .table-cell-center {
-      text-align: center;
-    }
-
-    .version-select {
-      width: 100%;
-      height: 28px;
-      padding: 0 8px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--bg-white);
-      font-size: 14px;
-      cursor: pointer;
-      box-shadow: 0 1px 2px rgba(50, 56, 62, 0.08);
-      font-family: 'Pretendard Variable', sans-serif;
-      color: var(--text-tertiary);
-      appearance: none;
-      padding-right: 20px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18'%3E%3Cpath d='M8.99949 9.87831L12.7118 6.16602L13.7725 7.22667L8.99949 11.9997L4.22656 7.22667L5.28722 6.16602L8.99949 9.87831Z' fill='%231D293D'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 6px center;
-      background-size: 18px;
-      padding-right: 26px;
-    }
-
-    .date-input {
-      width: 100%;
-      height: 28px;
-      padding: 0 8px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--bg-white);
-      font-size: 14px;
-      color: var(--text-primary);
-      cursor: pointer;
-      box-shadow: 0 1px 2px rgba(50, 56, 62, 0.08);
-      font-family: 'Pretendard Variable', sans-serif;
-    }
-
-    .date-input::-webkit-calendar-picker-indicator {
-      opacity: 0;
-    }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: var(--neutral-200);
-      border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--neutral-400);
-    }
-
-    /* Responsive */
-    @media (max-width: 1200px) {
-      .layout {
-        grid-template-columns: 1fr;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>법인 사용 설정</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pretendard+Variable:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
 
+      :root {
+        --primary: #1447e6;
+        --primary-light: #dbeafe;
+        --primary-lighter: #e0e7ff;
+        --text-primary: #0f172b;
+        --text-secondary: #314158;
+        --text-tertiary: #45556c;
+        --border: #cad5e2;
+        --bg-light: #f1f5f9;
+        --bg-white: #ffffff;
+        --neutral-50: #f8fafc;
+        --neutral-200: #cad5e2;
+        --neutral-400: #62748e;
+        --destructive: #e7000b;
+        --radius: 4px;
+      }
+
+      body {
+        font-family:
+          "Pretendard Variable",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        background: var(--bg-white);
+        color: var(--text-primary);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      /* Layout */
+      .container {
+        display: flex;
+        height: 100vh;
+        background: var(--bg-white);
+      }
+
+      /* Sidebar */
       .sidebar {
-        display: none;
+        width: 234px;
+        border-right: 1px solid var(--border);
+        background: var(--bg-light);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
       }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <svg width="23" height="20" viewBox="0 0 23 20" fill="none">
-          <path d="M14.0622 0C14.24 0 14.4147 0.0460062 14.5674 0.131673C14.7201 0.218926 14.8475 0.342667 14.9341 0.493377L22.8725 14.1794C22.9559 14.3238 23 14.4856 23 14.6522C23 14.8172 22.9559 14.9806 22.8725 15.1249L20.3324 19.505C20.2458 19.6542 20.1199 19.7795 19.9657 19.8667C19.813 19.954 19.6383 20 19.4604 20H3.53798C3.36013 20 3.18544 19.954 3.03278 19.8667C2.88012 19.7795 2.75263 19.6542 2.66607 19.505L0.127481 15.1249C0.0440676 14.9806 0 14.8172 0 14.6522C0 14.4872 0.0440676 14.3238 0.127481 14.1794L8.06432 0.493377C8.15088 0.344253 8.27836 0.218926 8.43103 0.131673C8.58369 0.0444198 8.75838 0 8.93623 0H14.0622ZM5.98214 15.1186C5.98214 15.1186 9.2085 12.9325 11.4984 12.9325C13.7884 12.9325 17.0147 15.1186 17.0147 15.1186L11.4984 5.46046L5.98214 15.1186Z" fill="#1D293D"/>
-        </svg>
-      </div>
-      <nav class="sidebar-menu">
-        <div class="menu-item">
-          <svg class="menu-icon" viewBox="0 0 18 18" fill="none"><path d="M2.25 2.25H15.75C16.1642 2.25 16.5 2.58579 16.5 3V15C16.5 15.4142 16.1642 15.75 15.75 15.75H2.25C1.83579 15.75 1.5 15.4142 1.5 15V3C1.5 2.58579 1.83579 2.25 2.25 2.25ZM3 3.75V14.25H15V3.75H3ZM5.25 9.75H6.75V12.75H5.25V9.75ZM8.25 5.25H9.75V12.75H8.25V5.25ZM11.25 7.5H12.75V12.75H11.25V7.5Z" fill="#45556C"/></svg>
-          <span class="menu-label">대시보드</span>
-        </div>
-        <div class="menu-item">
-          <svg class="menu-icon" viewBox="0 0 18 18" fill="none"><path d="M15 16.5H13.5V15C13.5 13.7573 12.4927 12.75 11.25 12.75H6.75C5.50736 12.75 4.5 13.7573 4.5 15V16.5H3V15C3 12.929 4.67893 11.25 6.75 11.25H11.25C13.321 11.25 15 12.929 15 15V16.5ZM9 9.75C6.51472 9.75 4.5 7.73527 4.5 5.25C4.5 2.76472 6.51472 0.75 9 0.75C11.4853 0.75 13.5 2.76472 13.5 5.25C13.5 7.73527 11.4853 9.75 9 9.75ZM9 8.25C10.6568 8.25 12 6.90686 12 5.25C12 3.59314 10.6568 2.25 9 2.25C7.34314 2.25 6 3.59314 6 5.25C6 6.90686 7.34314 8.25 9 8.25Z" fill="#45556C"/></svg>
-          <span class="menu-label">계정</span>
-        </div>
-        <div class="menu-item active">
-          <svg class="menu-icon" viewBox="0 0 18 18" fill="none"><path d="M15.75 14.25H17.25V15.75H0.75V14.25H2.25V3C2.25 2.58579 2.58579 2.25 3 2.25H10.5C10.9142 2.25 11.25 2.58579 11.25 3V14.25H14.25V8.25H12.75V6.75H15C15.4142 6.75 15.75 7.08579 15.75 7.5V14.25ZM3.75 3.75V14.25H9.75V3.75H3.75ZM5.25 8.25H8.25V9.75H5.25V8.25ZM5.25 5.25H8.25V6.75H5.25V5.25Z" fill="#1447E6"/></svg>
-          <span class="menu-label">조직</span>
-        </div>
-        <div class="menu-item">
-          <svg class="menu-icon" viewBox="0 0 18 18" fill="none"><path d="M11.9993 2.25001C14.4848 2.25001 16.5 4.27142 16.5 6.74562V15.75H6.00074C3.5152 15.75 1.50001 13.7286 1.50001 11.2544V8.25005H3.00001V11.2544C3.00001 12.9032 4.3466 14.25 6.00074 14.25H15V6.74562C15 5.09687 13.6534 3.75001 11.9993 3.75001H7.5V2.25001H11.9993ZM7.5 9.75005H6.00002V8.25005H7.5V9.75005ZM12 9.75005H10.5V8.25005H12V9.75005ZM2.64698 0.989506C2.77938 0.670164 3.22063 0.670165 3.35303 0.989506L3.54273 1.448C3.86666 2.2301 4.47116 2.85464 5.23096 3.19264L5.7693 3.43214C6.07701 3.56925 6.07697 4.01716 5.7693 4.15431L5.19947 4.40773C4.45874 4.73719 3.86504 5.3396 3.53541 6.09596L3.35011 6.52004C3.21477 6.83063 2.78525 6.83063 2.64991 6.52004L2.4646 6.09596C2.13496 5.33961 1.54129 4.73719 0.800542 4.40773L0.230717 4.15431C-0.0768878 4.01716 -0.0769237 3.56925 0.230717 3.43214L0.76905 3.19264C1.52884 2.85464 2.13335 2.23012 2.45729 1.448L2.64698 0.989506Z" fill="#45556C"/></svg>
-          <span class="menu-label">에이전트</span>
-        </div>
-        <div class="menu-item">
-          <svg class="menu-icon" viewBox="0 0 18 18" fill="none"><path d="M9 1.5C13.1421 1.5 16.5 4.85786 16.5 9C16.5 13.1421 13.1421 16.5 9 16.5C7.7235 16.5 6.52144 16.1811 5.46922 15.6186L1.5 16.5L2.38222 12.5323C1.81922 11.4797 1.5 10.2771 1.5 9C1.5 4.85786 4.85786 1.5 9 1.5ZM9 3C5.68629 3 3 5.68629 3 9C3 10.001 3.24422 10.9636 3.7049 11.8248L3.96714 12.3151L3.47584 14.5247L5.68642 14.0338L6.17638 14.2958C7.03736 14.756 7.99942 15 9 15C12.3137 15 15 12.3137 15 9C15 5.68629 12.3137 3 9 3ZM9.75 5.25V9H12.75V10.5H8.25V5.25H9.75Z" fill="#45556C"/></svg>
-          <span class="menu-label">로그</span>
-        </div>
-        <div class="menu-item">
-          <svg class="menu-icon" viewBox="0 0 18 18" fill="none"><path d="M2.50508 12.7503C2.18089 12.1887 1.93756 11.6028 1.77148 11.0057C2.50084 10.6335 3.00028 9.87522 3.00028 9.00027C3.00028 8.126 2.50159 7.36812 1.77313 6.99568C2.10817 5.7875 2.74441 4.66232 3.64904 3.74263C4.33601 4.18824 5.2425 4.24163 6.00028 3.80412C6.75805 3.36662 7.16506 2.55488 7.12264 1.73715C8.37146 1.41357 9.66401 1.42515 10.8778 1.73909C10.8361 2.55617 11.2431 3.36696 12.0003 3.80412C12.7581 4.24161 13.6645 4.18824 14.3514 3.74267C14.7855 4.18502 15.1713 4.68875 15.4955 5.25028C15.8196 5.8118 16.063 6.39781 16.2291 6.99483C15.4997 7.36697 15.0003 8.12532 15.0003 9.00027C15.0003 9.87462 15.4989 10.6324 16.2274 11.0049C15.8924 12.213 15.2562 13.3382 14.3515 14.2579C13.6645 13.8123 12.7581 13.7589 12.0003 14.1964C11.2425 14.6339 10.8355 15.4457 10.8779 16.2634C9.62914 16.587 8.33659 16.5754 7.12273 16.2615C7.16442 15.4443 6.75745 14.6336 6.00028 14.1964C5.24252 13.7589 4.33608 13.8123 3.64912 14.2578C3.21511 13.8155 2.82928 13.3118 2.50508 12.7503Z" fill="#45556C"/></svg>
-          <span class="menu-label">시스템</span>
-        </div>
-        <div class="menu-item">
-          <svg class="menu-icon" viewBox="0 0 18 18" fill="none"><path d="M4.09091 11.25L0.75 13.875V2.25C0.75 1.83579 1.08579 1.5 1.5 1.5H12.75C13.1642 1.5 13.5 1.83579 13.5 2.25V11.25H4.09091ZM3.57211 9.75H12V3H2.25V10.7888L3.57211 9.75ZM6 12.75H13.6779L15 13.7888V6H15.75C16.1642 6 16.5 6.33579 16.5 6.75V16.875L13.1591 14.25H6.75C6.33579 14.25 6 13.9142 6 13.5V12.75Z" fill="#45556C"/></svg>
-          <span class="menu-label">지원</span>
-        </div>
-      </nav>
-    </aside>
 
-    <!-- Main Content -->
-    <main class="main">
-      <!-- Header -->
-      <header class="header">
-        <div class="header-icon notification-badge">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M15 12.75H16.5V14.25H1.5V12.75H3V7.5C3 4.18629 5.68629 1.5 9 1.5C12.3137 1.5 15 4.18629 15 7.5V12.75ZM13.5 12.75V7.5C13.5 5.01472 11.4853 3 9 3C6.51472 3 4.5 5.01472 4.5 7.5V12.75H13.5ZM6.75 15.75H11.25V17.25H6.75V15.75Z" fill="#45556C"/></svg>
-          <div class="badge">10</div>
-        </div>
-        <div class="header-icon">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M14.25 16.5H3.75C2.50736 16.5 1.5 15.4927 1.5 14.25V2.25C1.5 1.83579 1.83579 1.5 2.25 1.5H12.75C13.1642 1.5 13.5 1.83579 13.5 2.25V11.25H16.5V14.25C16.5 15.4927 15.4927 16.5 14.25 16.5ZM13.5 12.75V14.25C13.5 14.6642 13.8358 15 14.25 15C14.6642 15 15 14.6642 15 14.25V12.75H13.5ZM12 15V3H3V14.25C3 14.6642 3.33579 15 3.75 15H12ZM4.5 5.25H10.5V6.75H4.5V5.25ZM4.5 8.25H10.5V9.75H4.5V8.25ZM4.5 11.25H8.25V12.75H4.5V11.25Z" fill="#45556C"/></svg>
-        </div>
-        <div class="header-icon">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11.9993 2.25001C14.4848 2.25001 16.5 4.27142 16.5 6.74562V15.75H6.00074C3.5152 15.75 1.50001 13.7286 1.50001 11.2544V8.25005H3.00001V11.2544C3.00001 12.9032 4.3466 14.25 6.00074 14.25H15V6.74562C15 5.09687 13.6534 3.75001 11.9993 3.75001H7.5V2.25001H11.9993ZM7.5 9.75005H6.00002V8.25005H7.5V9.75005ZM12 9.75005H10.5V8.25005H12V9.75005ZM2.64698 0.989506C2.77938 0.670164 3.22063 0.670165 3.35303 0.989506L3.54273 1.448C3.86666 2.2301 4.47116 2.85464 5.23096 3.19264L5.7693 3.43214C6.07701 3.56925 6.07697 4.01716 5.7693 4.15431L5.19947 4.40773C4.45874 4.73719 3.86504 5.3396 3.53541 6.09596L3.35011 6.52004C3.21477 6.83063 2.78525 6.83063 2.64991 6.52004L2.4646 6.09596C2.13496 5.33961 1.54129 4.73719 0.800542 4.40773L0.230717 4.15431C-0.0768878 4.01716 -0.0769237 3.56925 0.230717 3.43214L0.76905 3.19264C1.52884 2.85464 2.13335 2.23012 2.45729 1.448L2.64698 0.989506Z" fill="#45556C"/></svg>
-        </div>
-        <div class="user-info">
-          <div class="avatar">GD</div>
-          <div class="user-name">홍길동</div>
-        </div>
-      </header>
+      .sidebar-header {
+        height: 52px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg-white);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 18px;
+      }
 
-      <!-- Content -->
-      <div class="content">
-        <!-- Breadcrumb -->
-        <div class="breadcrumb">
-          <span class="breadcrumb-item">조직</span>
-          <span class="breadcrumb-separator">/</span>
-          <span class="breadcrumb-item">법인 사용 설정</span>
-        </div>
+      .sidebar-menu {
+        flex: 1;
+        padding: 6px 12px;
+      }
 
-        <!-- Header Section -->
-        <div class="header-section">
-          <div class="header-title-group">
-            <div class="header-icon-building">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M17.5007 15.8333H19.1673V17.5H0.833984V15.8333H2.50065V3.33333C2.50065 2.8731 2.87375 2.5 3.33398 2.5H11.6673C12.1276 2.5 12.5007 2.8731 12.5007 3.33333V15.8333H14.1673V7.5H16.6673C17.1276 7.5 17.5007 7.8731 17.5007 8.33333V15.8333ZM5.83398 9.16667V10.8333H9.16732V9.16667H5.83398ZM5.83398 5.83333V7.5H9.16732V5.83333H5.83398Z" fill="white"/></svg>
+      .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 11px 10px;
+        border-radius: var(--radius);
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-weight: 700;
+        margin-bottom: 6px;
+        transition: background 0.2s;
+      }
+
+      .menu-item:hover {
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      .menu-item.active {
+        background: rgba(255, 255, 255, 0.5);
+        color: var(--primary);
+      }
+
+      .menu-item svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .menu-icon {
+        flex-shrink: 0;
+      }
+
+      .menu-label {
+        flex: 1;
+        font-size: 14px;
+      }
+
+      /* Main Content */
+      .main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .header {
+        height: 52px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg-white);
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 0 20px;
+        gap: 4px;
+      }
+
+      .header-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border-radius: var(--radius);
+        transition: background 0.2s;
+      }
+
+      .header-icon:hover {
+        background: var(--neutral-50);
+      }
+
+      .notification-badge {
+        position: relative;
+      }
+
+      .badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        width: 20px;
+        height: 18px;
+        background: var(--destructive);
+        color: white;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 18px;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0 8px;
+        cursor: pointer;
+      }
+
+      .avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--bg-white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: var(--text-secondary);
+      }
+
+      .user-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-secondary);
+      }
+
+      /* Content Area */
+      .content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 24px;
+      }
+
+      .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 14px;
+        margin-bottom: 16px;
+      }
+
+      .breadcrumb-item {
+        color: var(--text-secondary);
+        padding: 0 4px;
+      }
+
+      .breadcrumb-separator {
+        color: var(--text-secondary);
+      }
+
+      /* Header Section */
+      .header-section {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 20px;
+        border: 1px solid #bedbff;
+        border-radius: 8px;
+        background: linear-gradient(90deg, #dbeafe 0%, #e0e7ff 100%);
+        box-shadow: 0 1px 2px rgba(50, 56, 62, 0.08);
+        margin-bottom: 24px;
+      }
+
+      .header-title-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .header-icon-building {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .header-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 31px;
+      }
+
+      .button-group {
+        display: flex;
+        gap: 6px;
+      }
+
+      .btn {
+        padding: 2px 12px;
+        height: 32px;
+        border-radius: var(--radius);
+        border: none;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: "Pretendard Variable", sans-serif;
+      }
+
+      .btn-secondary {
+        border: 1px solid #51a2ff;
+        color: var(--primary);
+        background: white;
+      }
+
+      .btn-secondary:hover {
+        background: rgba(20, 71, 230, 0.05);
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #0e34cc;
+      }
+
+      /* Layout Grid */
+      .layout {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 16px;
+      }
+
+      /* Panels */
+      .panel {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        box-shadow: 0 1px 2px rgba(50, 56, 62, 0.08);
+        overflow: hidden;
+      }
+
+      .panel-header {
+        height: 46px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+      }
+
+      .panel-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 24px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .badge-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 7px;
+        height: 20px;
+        background: var(--primary-light);
+        color: #193cb8;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .panel-content {
+        padding: 20px;
+      }
+
+      /* Dropdown */
+      .form-group {
+        margin-bottom: 12px;
+      }
+
+      .select-wrapper {
+        position: relative;
+      }
+
+      .select-box {
+        width: 100%;
+        height: 32px;
+        padding: 0 12px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--bg-white);
+        color: var(--text-secondary);
+        font-size: 14px;
+        cursor: pointer;
+        appearance: none;
+        box-shadow: 0 1px 2px rgba(50, 56, 62, 0.08);
+        font-family: "Pretendard Variable", sans-serif;
+        padding-right: 30px;
+      }
+
+      .select-wrapper::after {
+        content: "▼";
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+        color: var(--text-primary);
+        font-size: 12px;
+      }
+
+      .search-box {
+        position: relative;
+        margin-bottom: 12px;
+      }
+
+      .search-input {
+        width: 100%;
+        height: 32px;
+        padding: 0 12px;
+        padding-right: 30px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--bg-white);
+        font-size: 14px;
+        color: var(--text-secondary);
+        box-shadow: 0 1px 2px rgba(50, 56, 62, 0.08);
+        font-family: "Pretendard Variable", sans-serif;
+      }
+
+      .search-input::placeholder {
+        color: var(--neutral-400);
+      }
+
+      .search-icon {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 18px;
+        height: 18px;
+        pointer-events: none;
+      }
+
+      /* Department List */
+      .dept-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        max-height: 320px;
+        overflow-y: auto;
+      }
+
+      .dept-item {
+        height: 32px;
+        padding: 6px 12px;
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        background: var(--bg-white);
+        color: var(--text-primary);
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s;
+      }
+
+      .dept-item:hover {
+        background: var(--neutral-50);
+      }
+
+      .dept-item.selected {
+        border-color: var(--primary);
+        color: var(--primary);
+        font-weight: 700;
+      }
+
+      /* Switches */
+      .switch-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .switch {
+        position: relative;
+        width: 36px;
+        height: 20px;
+        background: var(--primary);
+        border: none;
+        border-radius: 16px;
+        cursor: pointer;
+        appearance: none;
+        padding: 0;
+        transition: background 0.2s;
+      }
+
+      .switch::before {
+        content: "";
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background: white;
+        border-radius: 50%;
+        top: 4px;
+        left: 20px;
+        transition: left 0.2s;
+      }
+
+      .switch:not(:checked) {
+        background: var(--neutral-200);
+      }
+
+      .switch:not(:checked)::before {
+        left: 2px;
+      }
+
+      .switch-label {
+        font-size: 14px;
+        color: var(--primary);
+        font-weight: 400;
+      }
+
+      /* Tables */
+      .table-wrapper {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        background: var(--bg-light);
+      }
+
+      th {
+        height: 40px;
+        padding: 10px 8px;
+        text-align: left;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-secondary);
+        border: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+      }
+
+      th:first-child {
+        border-left: 1px solid var(--border);
+        border-radius: 4px 0 0 0;
+      }
+
+      th:last-child {
+        border-right: 1px solid var(--border);
+        border-radius: 0 4px 0 0;
+      }
+
+      td {
+        height: 46px;
+        padding: 6px 8px;
+        border-bottom: 1px solid var(--border);
+        border-left: 1px solid var(--border);
+        font-size: 14px;
+        color: var(--text-primary);
+      }
+
+      td:last-child {
+        border-right: 1px solid var(--border);
+      }
+
+      tbody tr:last-child td {
+        border-bottom: 1px solid var(--border);
+      }
+
+      tbody tr:last-child td:first-child {
+        border-bottom-left-radius: 4px;
+      }
+
+      tbody tr:last-child td:last-child {
+        border-bottom-right-radius: 4px;
+      }
+
+      .table-cell-center {
+        text-align: center;
+      }
+
+      .version-select {
+        width: 100%;
+        height: 28px;
+        padding: 0 8px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--bg-white);
+        font-size: 14px;
+        cursor: pointer;
+        box-shadow: 0 1px 2px rgba(50, 56, 62, 0.08);
+        font-family: "Pretendard Variable", sans-serif;
+        color: var(--text-tertiary);
+        appearance: none;
+        padding-right: 20px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18'%3E%3Cpath d='M8.99949 9.87831L12.7118 6.16602L13.7725 7.22667L8.99949 11.9997L4.22656 7.22667L5.28722 6.16602L8.99949 9.87831Z' fill='%231D293D'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 6px center;
+        background-size: 18px;
+        padding-right: 26px;
+      }
+
+      .date-input {
+        width: 100%;
+        height: 28px;
+        padding: 0 8px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--bg-white);
+        font-size: 14px;
+        color: var(--text-primary);
+        cursor: pointer;
+        box-shadow: 0 1px 2px rgba(50, 56, 62, 0.08);
+        font-family: "Pretendard Variable", sans-serif;
+      }
+
+      .date-input::-webkit-calendar-picker-indicator {
+        opacity: 0;
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--neutral-200);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--neutral-400);
+      }
+
+      /* Responsive */
+      @media (max-width: 1200px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <svg width="23" height="20" viewBox="0 0 23 20" fill="none">
+            <path
+              d="M14.0622 0C14.24 0 14.4147 0.0460062 14.5674 0.131673C14.7201 0.218926 14.8475 0.342667 14.9341 0.493377L22.8725 14.1794C22.9559 14.3238 23 14.4856 23 14.6522C23 14.8172 22.9559 14.9806 22.8725 15.1249L20.3324 19.505C20.2458 19.6542 20.1199 19.7795 19.9657 19.8667C19.813 19.954 19.6383 20 19.4604 20H3.53798C3.36013 20 3.18544 19.954 3.03278 19.8667C2.88012 19.7795 2.75263 19.6542 2.66607 19.505L0.127481 15.1249C0.0440676 14.9806 0 14.8172 0 14.6522C0 14.4872 0.0440676 14.3238 0.127481 14.1794L8.06432 0.493377C8.15088 0.344253 8.27836 0.218926 8.43103 0.131673C8.58369 0.0444198 8.75838 0 8.93623 0H14.0622ZM5.98214 15.1186C5.98214 15.1186 9.2085 12.9325 11.4984 12.9325C13.7884 12.9325 17.0147 15.1186 17.0147 15.1186L11.4984 5.46046L5.98214 15.1186Z"
+              fill="#1D293D"
+            />
+          </svg>
+        </div>
+        <nav class="sidebar-menu">
+          <div class="menu-item">
+            <svg class="menu-icon" viewBox="0 0 18 18" fill="none">
+              <path
+                d="M2.25 2.25H15.75C16.1642 2.25 16.5 2.58579 16.5 3V15C16.5 15.4142 16.1642 15.75 15.75 15.75H2.25C1.83579 15.75 1.5 15.4142 1.5 15V3C1.5 2.58579 1.83579 2.25 2.25 2.25ZM3 3.75V14.25H15V3.75H3ZM5.25 9.75H6.75V12.75H5.25V9.75ZM8.25 5.25H9.75V12.75H8.25V5.25ZM11.25 7.5H12.75V12.75H11.25V7.5Z"
+                fill="#45556C"
+              />
+            </svg>
+            <span class="menu-label">대시보드</span>
+          </div>
+          <div class="menu-item">
+            <svg class="menu-icon" viewBox="0 0 18 18" fill="none">
+              <path
+                d="M15 16.5H13.5V15C13.5 13.7573 12.4927 12.75 11.25 12.75H6.75C5.50736 12.75 4.5 13.7573 4.5 15V16.5H3V15C3 12.929 4.67893 11.25 6.75 11.25H11.25C13.321 11.25 15 12.929 15 15V16.5ZM9 9.75C6.51472 9.75 4.5 7.73527 4.5 5.25C4.5 2.76472 6.51472 0.75 9 0.75C11.4853 0.75 13.5 2.76472 13.5 5.25C13.5 7.73527 11.4853 9.75 9 9.75ZM9 8.25C10.6568 8.25 12 6.90686 12 5.25C12 3.59314 10.6568 2.25 9 2.25C7.34314 2.25 6 3.59314 6 5.25C6 6.90686 7.34314 8.25 9 8.25Z"
+                fill="#45556C"
+              />
+            </svg>
+            <span class="menu-label">계정</span>
+          </div>
+          <div class="menu-item active">
+            <svg class="menu-icon" viewBox="0 0 18 18" fill="none">
+              <path
+                d="M15.75 14.25H17.25V15.75H0.75V14.25H2.25V3C2.25 2.58579 2.58579 2.25 3 2.25H10.5C10.9142 2.25 11.25 2.58579 11.25 3V14.25H14.25V8.25H12.75V6.75H15C15.4142 6.75 15.75 7.08579 15.75 7.5V14.25ZM3.75 3.75V14.25H9.75V3.75H3.75ZM5.25 8.25H8.25V9.75H5.25V8.25ZM5.25 5.25H8.25V6.75H5.25V5.25Z"
+                fill="#1447E6"
+              />
+            </svg>
+            <span class="menu-label">조직</span>
+          </div>
+          <div class="menu-item">
+            <svg class="menu-icon" viewBox="0 0 18 18" fill="none">
+              <path
+                d="M11.9993 2.25001C14.4848 2.25001 16.5 4.27142 16.5 6.74562V15.75H6.00074C3.5152 15.75 1.50001 13.7286 1.50001 11.2544V8.25005H3.00001V11.2544C3.00001 12.9032 4.3466 14.25 6.00074 14.25H15V6.74562C15 5.09687 13.6534 3.75001 11.9993 3.75001H7.5V2.25001H11.9993ZM7.5 9.75005H6.00002V8.25005H7.5V9.75005ZM12 9.75005H10.5V8.25005H12V9.75005ZM2.64698 0.989506C2.77938 0.670164 3.22063 0.670165 3.35303 0.989506L3.54273 1.448C3.86666 2.2301 4.47116 2.85464 5.23096 3.19264L5.7693 3.43214C6.07701 3.56925 6.07697 4.01716 5.7693 4.15431L5.19947 4.40773C4.45874 4.73719 3.86504 5.3396 3.53541 6.09596L3.35011 6.52004C3.21477 6.83063 2.78525 6.83063 2.64991 6.52004L2.4646 6.09596C2.13496 5.33961 1.54129 4.73719 0.800542 4.40773L0.230717 4.15431C-0.0768878 4.01716 -0.0769237 3.56925 0.230717 3.43214L0.76905 3.19264C1.52884 2.85464 2.13335 2.23012 2.45729 1.448L2.64698 0.989506Z"
+                fill="#45556C"
+              />
+            </svg>
+            <span class="menu-label">에이전트</span>
+          </div>
+          <div class="menu-item">
+            <svg class="menu-icon" viewBox="0 0 18 18" fill="none">
+              <path
+                d="M9 1.5C13.1421 1.5 16.5 4.85786 16.5 9C16.5 13.1421 13.1421 16.5 9 16.5C7.7235 16.5 6.52144 16.1811 5.46922 15.6186L1.5 16.5L2.38222 12.5323C1.81922 11.4797 1.5 10.2771 1.5 9C1.5 4.85786 4.85786 1.5 9 1.5ZM9 3C5.68629 3 3 5.68629 3 9C3 10.001 3.24422 10.9636 3.7049 11.8248L3.96714 12.3151L3.47584 14.5247L5.68642 14.0338L6.17638 14.2958C7.03736 14.756 7.99942 15 9 15C12.3137 15 15 12.3137 15 9C15 5.68629 12.3137 3 9 3ZM9.75 5.25V9H12.75V10.5H8.25V5.25H9.75Z"
+                fill="#45556C"
+              />
+            </svg>
+            <span class="menu-label">로그</span>
+          </div>
+          <div class="menu-item">
+            <svg class="menu-icon" viewBox="0 0 18 18" fill="none">
+              <path
+                d="M2.50508 12.7503C2.18089 12.1887 1.93756 11.6028 1.77148 11.0057C2.50084 10.6335 3.00028 9.87522 3.00028 9.00027C3.00028 8.126 2.50159 7.36812 1.77313 6.99568C2.10817 5.7875 2.74441 4.66232 3.64904 3.74263C4.33601 4.18824 5.2425 4.24163 6.00028 3.80412C6.75805 3.36662 7.16506 2.55488 7.12264 1.73715C8.37146 1.41357 9.66401 1.42515 10.8778 1.73909C10.8361 2.55617 11.2431 3.36696 12.0003 3.80412C12.7581 4.24161 13.6645 4.18824 14.3514 3.74267C14.7855 4.18502 15.1713 4.68875 15.4955 5.25028C15.8196 5.8118 16.063 6.39781 16.2291 6.99483C15.4997 7.36697 15.0003 8.12532 15.0003 9.00027C15.0003 9.87462 15.4989 10.6324 16.2274 11.0049C15.8924 12.213 15.2562 13.3382 14.3515 14.2579C13.6645 13.8123 12.7581 13.7589 12.0003 14.1964C11.2425 14.6339 10.8355 15.4457 10.8779 16.2634C9.62914 16.587 8.33659 16.5754 7.12273 16.2615C7.16442 15.4443 6.75745 14.6336 6.00028 14.1964C5.24252 13.7589 4.33608 13.8123 3.64912 14.2578C3.21511 13.8155 2.82928 13.3118 2.50508 12.7503Z"
+                fill="#45556C"
+              />
+            </svg>
+            <span class="menu-label">시스템</span>
+          </div>
+          <div class="menu-item">
+            <svg class="menu-icon" viewBox="0 0 18 18" fill="none">
+              <path
+                d="M4.09091 11.25L0.75 13.875V2.25C0.75 1.83579 1.08579 1.5 1.5 1.5H12.75C13.1642 1.5 13.5 1.83579 13.5 2.25V11.25H4.09091ZM3.57211 9.75H12V3H2.25V10.7888L3.57211 9.75ZM6 12.75H13.6779L15 13.7888V6H15.75C16.1642 6 16.5 6.33579 16.5 6.75V16.875L13.1591 14.25H6.75C6.33579 14.25 6 13.9142 6 13.5V12.75Z"
+                fill="#45556C"
+              />
+            </svg>
+            <span class="menu-label">지원</span>
+          </div>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main">
+        <!-- Header -->
+        <header class="header">
+          <div class="header-icon notification-badge">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path
+                d="M15 12.75H16.5V14.25H1.5V12.75H3V7.5C3 4.18629 5.68629 1.5 9 1.5C12.3137 1.5 15 4.18629 15 7.5V12.75ZM13.5 12.75V7.5C13.5 5.01472 11.4853 3 9 3C6.51472 3 4.5 5.01472 4.5 7.5V12.75H13.5ZM6.75 15.75H11.25V17.25H6.75V15.75Z"
+                fill="#45556C"
+              />
+            </svg>
+            <div class="badge">10</div>
+          </div>
+          <div class="header-icon">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path
+                d="M14.25 16.5H3.75C2.50736 16.5 1.5 15.4927 1.5 14.25V2.25C1.5 1.83579 1.83579 1.5 2.25 1.5H12.75C13.1642 1.5 13.5 1.83579 13.5 2.25V11.25H16.5V14.25C16.5 15.4927 15.4927 16.5 14.25 16.5ZM13.5 12.75V14.25C13.5 14.6642 13.8358 15 14.25 15C14.6642 15 15 14.6642 15 14.25V12.75H13.5ZM12 15V3H3V14.25C3 14.6642 3.33579 15 3.75 15H12ZM4.5 5.25H10.5V6.75H4.5V5.25ZM4.5 8.25H10.5V9.75H4.5V8.25ZM4.5 11.25H8.25V12.75H4.5V11.25Z"
+                fill="#45556C"
+              />
+            </svg>
+          </div>
+          <div class="header-icon">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path
+                d="M11.9993 2.25001C14.4848 2.25001 16.5 4.27142 16.5 6.74562V15.75H6.00074C3.5152 15.75 1.50001 13.7286 1.50001 11.2544V8.25005H3.00001V11.2544C3.00001 12.9032 4.3466 14.25 6.00074 14.25H15V6.74562C15 5.09687 13.6534 3.75001 11.9993 3.75001H7.5V2.25001H11.9993ZM7.5 9.75005H6.00002V8.25005H7.5V9.75005ZM12 9.75005H10.5V8.25005H12V9.75005ZM2.64698 0.989506C2.77938 0.670164 3.22063 0.670165 3.35303 0.989506L3.54273 1.448C3.86666 2.2301 4.47116 2.85464 5.23096 3.19264L5.7693 3.43214C6.07701 3.56925 6.07697 4.01716 5.7693 4.15431L5.19947 4.40773C4.45874 4.73719 3.86504 5.3396 3.53541 6.09596L3.35011 6.52004C3.21477 6.83063 2.78525 6.83063 2.64991 6.52004L2.4646 6.09596C2.13496 5.33961 1.54129 4.73719 0.800542 4.40773L0.230717 4.15431C-0.0768878 4.01716 -0.0769237 3.56925 0.230717 3.43214L0.76905 3.19264C1.52884 2.85464 2.13335 2.23012 2.45729 1.448L2.64698 0.989506Z"
+                fill="#45556C"
+              />
+            </svg>
+          </div>
+          <div class="user-info">
+            <div class="avatar">GD</div>
+            <div class="user-name">홍길동</div>
+          </div>
+        </header>
+
+        <!-- Content -->
+        <div class="content">
+          <!-- Breadcrumb -->
+          <div class="breadcrumb">
+            <span class="breadcrumb-item">조직</span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item">법인 사용 설정</span>
+          </div>
+
+          <!-- Header Section -->
+          <div class="header-section">
+            <div class="header-title-group">
+              <div class="header-icon-building">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path
+                    d="M17.5007 15.8333H19.1673V17.5H0.833984V15.8333H2.50065V3.33333C2.50065 2.8731 2.87375 2.5 3.33398 2.5H11.6673C12.1276 2.5 12.5007 2.8731 12.5007 3.33333V15.8333H14.1673V7.5H16.6673C17.1276 7.5 17.5007 7.8731 17.5007 8.33333V15.8333ZM5.83398 9.16667V10.8333H9.16732V9.16667H5.83398ZM5.83398 5.83333V7.5H9.16732V5.83333H5.83398Z"
+                    fill="white"
+                  />
+                </svg>
+              </div>
+              <h1 class="header-title">법인 사용 설정</h1>
             </div>
-            <h1 class="header-title">법인 사용 설정</h1>
+            <div class="button-group">
+              <button class="btn btn-secondary">취소</button>
+              <button class="btn btn-primary">저장</button>
+            </div>
           </div>
-          <div class="button-group">
-            <button class="btn btn-secondary">취소</button>
-            <button class="btn btn-primary">저장</button>
-          </div>
-        </div>
 
-        <!-- Layout -->
-        <div class="layout">
-          <!-- Left Panel: Department Selection -->
-          <div class="panel">
-            <div class="panel-header">
-              <div class="panel-title">
-                <span class="badge-count">1</span>
-                법인/부서 선택
+          <!-- Layout -->
+          <div class="layout">
+            <!-- Left Panel: Department Selection -->
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <span class="badge-count">1</span>
+                  법인/부서 선택
+                </div>
+              </div>
+              <div class="panel-content">
+                <div class="form-group">
+                  <div class="select-wrapper">
+                    <select class="select-box">
+                      <option>법인 선택</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="search-box">
+                  <input
+                    type="text"
+                    class="search-input"
+                    placeholder="부서명 검색"
+                  />
+                  <svg class="search-icon" viewBox="0 0 18 18" fill="none">
+                    <path
+                      d="M13.5233 12.4626L16.7353 15.6746L15.6746 16.7353L12.4626 13.5233C11.3077 14.4473 9.843 15 8.25 15C4.524 15 1.5 11.976 1.5 8.25C1.5 4.524 4.524 1.5 8.25 1.5C11.976 1.5 15 4.524 15 8.25C15 9.843 14.4473 11.3077 13.5233 12.4626ZM12.0185 11.9061C12.9356 10.9609 13.5 9.6717 13.5 8.25C13.5 5.34937 11.1506 3 8.25 3C5.34937 3 3 5.34937 3 8.25C3 11.1506 5.34937 13.5 8.25 13.5C9.6717 13.5 10.9609 12.9356 11.9061 12.0185L12.0185 11.9061Z"
+                      fill="#1D293D"
+                    />
+                  </svg>
+                </div>
+
+                <div class="dept-list">
+                  <div class="dept-item">인사 담당자 (3/10)</div>
+                  <div class="dept-item">마케팅 담당자 (3/10)</div>
+                  <div class="dept-item">디자인 담당자 (3/10)</div>
+                  <div class="dept-item selected">재무 담당자 (10/10)</div>
+                  <div class="dept-item">기획 담당자 (3/10)</div>
+                  <div class="dept-item">개발 담당자 (3/10)</div>
+                  <div class="dept-item">일반 임직원 (3/10)</div>
+                  <div class="dept-item">보안 담당자 (3/10)</div>
+                  <div class="dept-item">시스템 담당자 (3/10)</div>
+                </div>
               </div>
             </div>
-            <div class="panel-content">
-              <div class="form-group">
-                <div class="select-wrapper">
-                  <select class="select-box">
-                    <option>법인 선택</option>
-                  </select>
+
+            <!-- Right Panel: Agent Settings -->
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <span class="badge-count">2</span>
+                  에이전트 사용 설정
+                </div>
+              </div>
+              <div
+                class="panel-content"
+                style="
+                  border-bottom: 1px solid var(--border);
+                  padding-bottom: 16px;
+                  margin-bottom: 16px;
+                "
+              >
+                <div style="margin-bottom: 16px">
+                  <p
+                    style="
+                      font-size: 14px;
+                      font-weight: 700;
+                      color: var(--text-secondary);
+                      margin-bottom: 8px;
+                    "
+                  >
+                    선택된 법인/부서
+                  </p>
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      gap: 4px;
+                      font-size: 14px;
+                    "
+                  >
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path
+                        d="M13.9993 12.6667H15.3327V14H0.666016V12.6667H1.99935V2.66667C1.99935 2.29848 2.29783 2 2.66602 2H9.33268C9.70088 2 9.99935 2.29848 9.99935 2.66667V12.6667H12.666V7.33333H11.3327V6H13.3327C13.7009 6 13.9993 6.29848 13.9993 6.66667V12.6667ZM3.33268 3.33333V12.6667H8.66602V3.33333H3.33268ZM4.66602 7.33333H7.33268V8.66667H4.66602V7.33333ZM4.66602 4.66667H7.33268V6H4.66602V4.66667Z"
+                        fill="#45556C"
+                      />
+                    </svg>
+                    <span style="color: var(--text-primary); padding: 0 4px"
+                      >설정 그룹</span
+                    >
+                    <span style="color: var(--text-secondary)">/</span>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path
+                        d="M4.66732 3.33366V1.33366C4.66732 0.965472 4.9658 0.666992 5.33398 0.666992H10.6673C11.0355 0.666992 11.334 0.965472 11.334 1.33366V3.33366H14.0007C14.3689 3.33366 14.6673 3.63214 14.6673 4.00033V13.3337C14.6673 13.7019 14.3689 14.0003 14.0007 14.0003H2.00065C1.63246 14.0003 1.33398 13.7019 1.33398 13.3337V4.00033C1.33398 3.63214 1.63246 3.33366 2.00065 3.33366H4.66732ZM2.66732 10.667V12.667H13.334V10.667H2.66732ZM2.66732 9.33366H13.334V4.66699H2.66732V9.33366ZM6.00065 2.00033V3.33366H10.0007V2.00033H6.00065ZM7.33398 7.33366H8.66732V8.66699H7.33398V7.33366Z"
+                        fill="#45556C"
+                      />
+                    </svg>
+                    <span style="color: var(--text-primary); padding: 0 4px"
+                      >재무 담당자</span
+                    >
+                  </div>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 40px">
+                  <label
+                    style="
+                      font-size: 14px;
+                      font-weight: 700;
+                      color: var(--text-secondary);
+                    "
+                    >에이전트 사용 여부</label
+                  >
+                  <div class="switch-group">
+                    <input type="checkbox" class="switch" checked />
+                    <span class="switch-label">사용</span>
+                  </div>
                 </div>
               </div>
 
-              <div class="search-box">
-                <input type="text" class="search-input" placeholder="부서명 검색">
-                <svg class="search-icon" viewBox="0 0 18 18" fill="none"><path d="M13.5233 12.4626L16.7353 15.6746L15.6746 16.7353L12.4626 13.5233C11.3077 14.4473 9.843 15 8.25 15C4.524 15 1.5 11.976 1.5 8.25C1.5 4.524 4.524 1.5 8.25 1.5C11.976 1.5 15 4.524 15 8.25C15 9.843 14.4473 11.3077 13.5233 12.4626ZM12.0185 11.9061C12.9356 10.9609 13.5 9.6717 13.5 8.25C13.5 5.34937 11.1506 3 8.25 3C5.34937 3 3 5.34937 3 8.25C3 11.1506 5.34937 13.5 8.25 13.5C9.6717 13.5 10.9609 12.9356 11.9061 12.0185L12.0185 11.9061Z" fill="#1D293D"/></svg>
+              <!-- Table -->
+              <div class="table-wrapper">
+                <table>
+                  <thead>
+                    <tr>
+                      <th style="width: 66px">사용 여부</th>
+                      <th>에이전트 명</th>
+                      <th style="width: 160px">버전</th>
+                      <th style="width: 198px">사용 시작일</th>
+                      <th style="width: 198px">사용 종료일</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="table-cell-center">
+                        <input type="checkbox" class="switch" checked />
+                      </td>
+                      <td>재무 시나리오 비교</td>
+                      <td>
+                        <select class="version-select">
+                          <option>1.1.0</option>
+                          <option>1.0.0</option>
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="date-input"
+                          value="2024-12-01"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="date-input"
+                          value="2025-12-31"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="table-cell-center">
+                        <input type="checkbox" class="switch" checked />
+                      </td>
+                      <td>재무 데이터 분석</td>
+                      <td>
+                        <select class="version-select">
+                          <option>1.1.0</option>
+                          <option>1.0.0</option>
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="date-input"
+                          value="2024-12-01"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="date-input"
+                          value="2025-12-31"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="table-cell-center">
+                        <input type="checkbox" class="switch" checked />
+                      </td>
+                      <td>지출 패턴 분석</td>
+                      <td>
+                        <select class="version-select">
+                          <option>1.1.0</option>
+                          <option>1.0.0</option>
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="date-input"
+                          value="2024-12-01"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="date-input"
+                          value="2025-12-31"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="table-cell-center">
+                        <input type="checkbox" class="switch" checked />
+                      </td>
+                      <td>월별/연간 예산 초안 생성</td>
+                      <td>
+                        <select class="version-select">
+                          <option>1.1.0</option>
+                          <option>1.0.0</option>
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="date-input"
+                          value="2024-12-01"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="date-input"
+                          value="2025-12-31"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="table-cell-center">
+                        <input type="checkbox" class="switch" checked />
+                      </td>
+                      <td>달성률 추적</td>
+                      <td>
+                        <select class="version-select">
+                          <option>1.1.0</option>
+                          <option>1.0.0</option>
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="date-input"
+                          value="2024-12-01"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="date-input"
+                          value="2025-12-31"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="table-cell-center">
+                        <input type="checkbox" class="switch" checked />
+                      </td>
+                      <td>자산 배분 분석</td>
+                      <td>
+                        <select class="version-select">
+                          <option>1.1.0</option>
+                          <option>1.0.0</option>
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="date-input"
+                          value="2024-12-01"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="date-input"
+                          value="2025-12-31"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="table-cell-center">
+                        <input type="checkbox" class="switch" checked />
+                      </td>
+                      <td>투자 위험도 진단</td>
+                      <td>
+                        <select class="version-select">
+                          <option>1.1.0</option>
+                          <option>1.0.0</option>
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="date-input"
+                          value="2024-12-01"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="date-input"
+                          value="2025-12-31"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="table-cell-center">
+                        <input type="checkbox" class="switch" checked />
+                      </td>
+                      <td>예상 세금 계산</td>
+                      <td>
+                        <select class="version-select">
+                          <option>1.1.0</option>
+                          <option>1.0.0</option>
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="date-input"
+                          value="2024-12-01"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="date-input"
+                          value="2025-12-31"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="table-cell-center">
+                        <input type="checkbox" class="switch" checked />
+                      </td>
+                      <td>공제 항목 추천</td>
+                      <td>
+                        <select class="version-select">
+                          <option>1.1.0</option>
+                          <option>1.0.0</option>
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="date-input"
+                          value="2024-12-01"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="date-input"
+                          value="2025-12-31"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="table-cell-center">
+                        <input type="checkbox" class="switch" checked />
+                      </td>
+                      <td>현금 흐름 분석</td>
+                      <td>
+                        <select class="version-select">
+                          <option>1.1.0</option>
+                          <option>1.0.0</option>
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="date-input"
+                          value="2024-12-01"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="date-input"
+                          value="2025-12-31"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-
-              <div class="dept-list">
-                <div class="dept-item">인사 담당자 (3/10)</div>
-                <div class="dept-item">마케팅 담당자 (3/10)</div>
-                <div class="dept-item">디자인 담당자 (3/10)</div>
-                <div class="dept-item selected">재무 담당자 (10/10)</div>
-                <div class="dept-item">기획 담당자 (3/10)</div>
-                <div class="dept-item">개발 담당자 (3/10)</div>
-                <div class="dept-item">일반 임직원 (3/10)</div>
-                <div class="dept-item">보안 담당자 (3/10)</div>
-                <div class="dept-item">시스템 담당자 (3/10)</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Right Panel: Agent Settings -->
-          <div class="panel">
-            <div class="panel-header">
-              <div class="panel-title">
-                <span class="badge-count">2</span>
-                에이전트 사용 설정
-              </div>
-            </div>
-            <div class="panel-content" style="border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 16px;">
-              <div style="margin-bottom: 16px;">
-                <p style="font-size: 14px; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px;">선택된 법인/부서</p>
-                <div style="display: flex; align-items: center; gap: 4px; font-size: 14px;">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.9993 12.6667H15.3327V14H0.666016V12.6667H1.99935V2.66667C1.99935 2.29848 2.29783 2 2.66602 2H9.33268C9.70088 2 9.99935 2.29848 9.99935 2.66667V12.6667H12.666V7.33333H11.3327V6H13.3327C13.7009 6 13.9993 6.29848 13.9993 6.66667V12.6667ZM3.33268 3.33333V12.6667H8.66602V3.33333H3.33268ZM4.66602 7.33333H7.33268V8.66667H4.66602V7.33333ZM4.66602 4.66667H7.33268V6H4.66602V4.66667Z" fill="#45556C"/></svg>
-                  <span style="color: var(--text-primary); padding: 0 4px;">설정 그룹</span>
-                  <span style="color: var(--text-secondary);">/</span>
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4.66732 3.33366V1.33366C4.66732 0.965472 4.9658 0.666992 5.33398 0.666992H10.6673C11.0355 0.666992 11.334 0.965472 11.334 1.33366V3.33366H14.0007C14.3689 3.33366 14.6673 3.63214 14.6673 4.00033V13.3337C14.6673 13.7019 14.3689 14.0003 14.0007 14.0003H2.00065C1.63246 14.0003 1.33398 13.7019 1.33398 13.3337V4.00033C1.33398 3.63214 1.63246 3.33366 2.00065 3.33366H4.66732ZM2.66732 10.667V12.667H13.334V10.667H2.66732ZM2.66732 9.33366H13.334V4.66699H2.66732V9.33366ZM6.00065 2.00033V3.33366H10.0007V2.00033H6.00065ZM7.33398 7.33366H8.66732V8.66699H7.33398V7.33366Z" fill="#45556C"/></svg>
-                  <span style="color: var(--text-primary); padding: 0 4px;">재무 담당자</span>
-                </div>
-              </div>
-
-              <div style="display: flex; align-items: center; gap: 40px;">
-                <label style="font-size: 14px; font-weight: 700; color: var(--text-secondary);">에이전트 사용 여부</label>
-                <div class="switch-group">
-                  <input type="checkbox" class="switch" checked>
-                  <span class="switch-label">사용</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Table -->
-            <div class="table-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th style="width: 66px;">사용 여부</th>
-                    <th>에이전트 명</th>
-                    <th style="width: 160px;">버전</th>
-                    <th style="width: 198px;">사용 시작일</th>
-                    <th style="width: 198px;">사용 종료일</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="table-cell-center"><input type="checkbox" class="switch" checked></td>
-                    <td>재무 시나리오 비교</td>
-                    <td><select class="version-select"><option>1.1.0</option><option>1.0.0</option></select></td>
-                    <td><input type="date" class="date-input" value="2024-12-01"></td>
-                    <td><input type="date" class="date-input" value="2025-12-31"></td>
-                  </tr>
-                  <tr>
-                    <td class="table-cell-center"><input type="checkbox" class="switch" checked></td>
-                    <td>재무 데이터 분석</td>
-                    <td><select class="version-select"><option>1.1.0</option><option>1.0.0</option></select></td>
-                    <td><input type="date" class="date-input" value="2024-12-01"></td>
-                    <td><input type="date" class="date-input" value="2025-12-31"></td>
-                  </tr>
-                  <tr>
-                    <td class="table-cell-center"><input type="checkbox" class="switch" checked></td>
-                    <td>지출 패턴 분석</td>
-                    <td><select class="version-select"><option>1.1.0</option><option>1.0.0</option></select></td>
-                    <td><input type="date" class="date-input" value="2024-12-01"></td>
-                    <td><input type="date" class="date-input" value="2025-12-31"></td>
-                  </tr>
-                  <tr>
-                    <td class="table-cell-center"><input type="checkbox" class="switch" checked></td>
-                    <td>월별/연간 예산 초안 생성</td>
-                    <td><select class="version-select"><option>1.1.0</option><option>1.0.0</option></select></td>
-                    <td><input type="date" class="date-input" value="2024-12-01"></td>
-                    <td><input type="date" class="date-input" value="2025-12-31"></td>
-                  </tr>
-                  <tr>
-                    <td class="table-cell-center"><input type="checkbox" class="switch" checked></td>
-                    <td>달성률 추적</td>
-                    <td><select class="version-select"><option>1.1.0</option><option>1.0.0</option></select></td>
-                    <td><input type="date" class="date-input" value="2024-12-01"></td>
-                    <td><input type="date" class="date-input" value="2025-12-31"></td>
-                  </tr>
-                  <tr>
-                    <td class="table-cell-center"><input type="checkbox" class="switch" checked></td>
-                    <td>자산 배분 분석</td>
-                    <td><select class="version-select"><option>1.1.0</option><option>1.0.0</option></select></td>
-                    <td><input type="date" class="date-input" value="2024-12-01"></td>
-                    <td><input type="date" class="date-input" value="2025-12-31"></td>
-                  </tr>
-                  <tr>
-                    <td class="table-cell-center"><input type="checkbox" class="switch" checked></td>
-                    <td>투자 위험도 진단</td>
-                    <td><select class="version-select"><option>1.1.0</option><option>1.0.0</option></select></td>
-                    <td><input type="date" class="date-input" value="2024-12-01"></td>
-                    <td><input type="date" class="date-input" value="2025-12-31"></td>
-                  </tr>
-                  <tr>
-                    <td class="table-cell-center"><input type="checkbox" class="switch" checked></td>
-                    <td>예상 세금 계산</td>
-                    <td><select class="version-select"><option>1.1.0</option><option>1.0.0</option></select></td>
-                    <td><input type="date" class="date-input" value="2024-12-01"></td>
-                    <td><input type="date" class="date-input" value="2025-12-31"></td>
-                  </tr>
-                  <tr>
-                    <td class="table-cell-center"><input type="checkbox" class="switch" checked></td>
-                    <td>공제 항목 추천</td>
-                    <td><select class="version-select"><option>1.1.0</option><option>1.0.0</option></select></td>
-                    <td><input type="date" class="date-input" value="2024-12-01"></td>
-                    <td><input type="date" class="date-input" value="2025-12-31"></td>
-                  </tr>
-                  <tr>
-                    <td class="table-cell-center"><input type="checkbox" class="switch" checked></td>
-                    <td>현금 흐름 분석</td>
-                    <td><select class="version-select"><option>1.1.0</option><option>1.0.0</option></select></td>
-                    <td><input type="date" class="date-input" value="2024-12-01"></td>
-                    <td><input type="date" class="date-input" value="2025-12-31"></td>
-                  </tr>
-                </tbody>
-              </table>
             </div>
           </div>
         </div>
-      </div>
-    </main>
-  </div>
+      </main>
+    </div>
 
-  <script>
-    // Minimal JS for interactions
-    document.querySelectorAll('.dept-item').forEach(item => {
-      item.addEventListener('click', function() {
-        document.querySelectorAll('.dept-item').forEach(el => el.classList.remove('selected'));
-        this.classList.add('selected');
+    <script>
+      // Minimal JS for interactions
+      document.querySelectorAll(".dept-item").forEach((item) => {
+        item.addEventListener("click", function () {
+          document
+            .querySelectorAll(".dept-item")
+            .forEach((el) => el.classList.remove("selected"));
+          this.classList.add("selected");
+        });
       });
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
