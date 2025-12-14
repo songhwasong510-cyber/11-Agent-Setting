@@ -14,7 +14,16 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Pretendard Variable', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+        sans: [
+          "Pretendard Variable",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "Roboto",
+          "Helvetica",
+          "Arial",
+          "sans-serif",
+        ],
       },
       colors: {
         border: "hsl(var(--border))",
